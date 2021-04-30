@@ -3,6 +3,7 @@
 #include <math.h>
 
 //20102424, 20112478 .pptx 도라에몽 참고하기
+//이걸로 제출하기
 
 #define GL_SILENCE_DEPRECATION
 
@@ -94,12 +95,16 @@ void torso()
 
 void rightArm()
 {
-
+	h = gluNewQuadric();
+	gluQuadricDrawStyle(h, GLU_LINE);
+	gluCylinder(h, 20, 20, 400, 20, 20);
 }
 
 void leftArm()
 {
-
+	h = gluNewQuadric();
+	gluQuadricDrawStyle(h, GLU_LINE);
+	gluCylinder(h, 20, 20, 400, 20, 20);
 }
 
 void rightLeg()
