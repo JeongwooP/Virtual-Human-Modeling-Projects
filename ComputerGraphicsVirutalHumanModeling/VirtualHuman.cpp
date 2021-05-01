@@ -69,7 +69,7 @@ void changeSize(int w, int h) {
 
 	// Set the correct perspective.
 	//gluPerspective(45.0f, ratio, 0.1f, 100.0f);
-	glOrtho(-500.0, 700.0, -500.0, 700.0, 0.0, 1000.0);
+	glOrtho(-700.0, 700.0, -700.0, 700.0, 0.0, 1300.0);
 
 	glMatrixMode(GL_MODELVIEW);
 }
@@ -97,14 +97,14 @@ void rightArm()
 {
 	h = gluNewQuadric();
 	gluQuadricDrawStyle(h, GLU_LINE);
-	gluCylinder(h, 20, 20, 400, 20, 20);
+	gluCylinder(h, 20, 20, 330, 20, 20);
 }
 
 void leftArm()
 {
 	h = gluNewQuadric();
 	gluQuadricDrawStyle(h, GLU_LINE);
-	gluCylinder(h, 20, 20, 400, 20, 20);
+	gluCylinder(h, 20, 20, 330, 20, 20);
 }
 
 void rightLeg()
@@ -153,7 +153,7 @@ void display(void) //drawSnowman()과 같음
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glPushMatrix();
-	glTranslated(0, 250, 0);	//x축,y축,z축 위치 지정
+	glTranslated(0, 100, 0);	//x축,y축,z축 위치 지정
 	glColor3f(1.0, 0.0, 1.0);
 	head();
 	glPopMatrix();
@@ -163,6 +163,22 @@ void display(void) //drawSnowman()과 같음
 	glColor3f(1.0, 0.0, 1.0);
 	glRotatef(90, 1.0, 0.0, 0.0);
 	torso();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslated(0, -50, 0);
+	glRotatef(90, 0.0, 1.0, 0.0); //y축 중심으로 90도 회전
+	glColor3f(1.0, 0.0, 1.0);
+	glRotatef(180, 1.0, 0.0, 0.0);
+	rightArm();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslated(0, -50, 0);
+	glRotatef(90, 0.0, 1.0, 0.0); 
+	glColor3f(1.0, 0.0, 1.0);
+	glRotatef(360, 1.0, 0.0, 0.0);
+	leftArm();
 	glPopMatrix();
 
 	//glFlush();
