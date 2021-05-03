@@ -1,6 +1,16 @@
+
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <windows.h>
 #include <glut.h>
 #include <math.h>
+#include <SOIL2.h>
+#include <string>
+#include <GL.h>
+#include <glaux.h>
+
+
+using namespace std;
 
 //20102424, 20112478 .pptx 도라에몽 참고하기
 //이걸로 제출하기
@@ -30,6 +40,14 @@
 #define JOINT_POINT_RADIUS 0.5
 #define JOINT_POINT_HEIGHT 0.5
 
+
+//int image_width = 0;
+//int image_height = 0;
+//unsigned  char* image = SOIL_load_image("Images/atom.png", &image_width, &image_height, NULL, SOIL_LOAD_RGBA);
+
+//GLuint texture0;
+
+
 GLUquadricObj *h, *t;
 
 int cameraLength = 0;
@@ -51,8 +69,49 @@ float deltaMove = 0.0f;
 int xOrigin = -1;
 int yOrigin = -1;
 
+unsigned int MyTextureObject[1];
+AUX_RGBImageRec *pTextureImage[1];
+
+GLuint  texture[1];
+
 //ctrl + k + c 주석
 //ctrl + k + u 주석해제
+
+
+AUX_RGBImageRec *LoadBMP(char *szFilename) {
+	FILE * pFile = NULL;
+	if (!szFilename) {
+		return NULL;
+	}
+	pFile = fopen(szFilename, "r");
+	if (pFile) {
+		fclose(pFile);
+		return auxDIBImageLoad(szFilename);
+	}
+	return NULL;
+}
+
+int LoadGLTextures() {
+	int Status = FALSE;
+	memset(pTextureImage, 0, sizeof(void *) * 1);
+	if (pTextureImage[0] = LoadBMP("C:/Users/Peter/Pictures/CG/atom.bmp")) {
+		printf("dd");
+		Status = TRUE;
+		glGenTextures(1, &MyTextureObject[0]);
+		glBindTexture(GL_TEXTURE_2D, MyTextureObject[0]);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexImage2D(GL_TEXTURE_2D, 0, 3, pTextureImage[0]->sizeX, pTextureImage[0]->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, pTextureImage[0]->data);
+		glEnable(GL_TEXTURE_2D);
+	}
+	if (pTextureImage[0]) {
+		if (pTextureImage[0]->data) {
+			free(pTextureImage[0]->data);
+		}
+		free(pTextureImage[0]);
+	}
+	return Status;
+}
 
 void changeSize(int w, int h) {
 
@@ -76,14 +135,14 @@ void changeSize(int w, int h) {
 
 void head()
 {
-	glutSolidSphere(100, 1000, 1000);
+	glutSolidSphere(75, 1000, 1000);
 }
 
 void torso()
 {
 	h = gluNewQuadric();
 	gluQuadricDrawStyle(h, GLU_LINE);
-	gluCylinder(h, 100, 100, 300, 20, 20);
+	gluCylinder(h, 100, 70, 250, 20, 20);
 	/*glPushMatrix();
 	glColor3f(1.0, 0.0, 5.0);
 	glRotatef(-90.0, 1.0, 0.0, 0.0);
@@ -109,32 +168,36 @@ void leftArm()
 
 void rightLeg()
 {
-
+	h = gluNewQuadric();
+	gluQuadricDrawStyle(h, GLU_LINE);
+	gluCylinder(h, 20, 20, 330, 20, 20);
 }
 
 void leftLeg()
 {
-	
+	h = gluNewQuadric();
+	gluQuadricDrawStyle(h, GLU_LINE);
+	gluCylinder(h, 20, 20, 330, 20, 20);
 }
 
 void leftHand()
 {
-
+	glutSolidSphere(30, 1000, 1000);
 }
 
 void rightHand()
 {
-
+	glutSolidSphere(30, 1000, 1000);
 }
 
 void leftFoot()
 {
-
+	glutSolidSphere(30, 1000, 1000);
 }
 
 void rightFoot()
 {
-
+	glutSolidSphere(30, 1000, 1000);
 }
 
 void setCamera()
@@ -153,7 +216,7 @@ void display(void) //drawSnowman()과 같음
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glPushMatrix();
-	glTranslated(0, 100, 0);	//x축,y축,z축 위치 지정
+	glTranslated(0, 70, 0);	//x축,y축,z축 위치 지정
 	glColor3f(1.0, 0.0, 1.0);
 	head();
 	glPopMatrix();
@@ -180,6 +243,63 @@ void display(void) //drawSnowman()과 같음
 	glRotatef(360, 1.0, 0.0, 0.0);
 	leftArm();
 	glPopMatrix();
+
+
+	glPushMatrix();
+	glTranslated(-50, -150, 0);
+	glRotatef(90, 0.0, 1.0, 0.0);
+	glColor3f(1.0, 1.0, 1.0);
+	glRotatef(90, 1.0, 0.0, 0.0);
+	glRotatef(90, 0.0, 0.0, 1.0);
+	rightLeg();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslated(50, -150, 0);
+	glRotatef(90, 0.0, 1.0, 0.0);
+	glColor3f(1.0, 1.0, 1.0);
+	glRotatef(90, 1.0, 0.0, 0.0);
+	glRotatef(90, 0.0, 0.0, 1.0);
+	leftLeg();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslated(-350, -50, 0);
+	glColor3f(1.0, 1.0, 1.0);
+	rightHand();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslated(350, -50, 0);
+	glColor3f(1.0, 1.0, 1.0);
+	leftHand();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslated(-50, -500, 0);
+	glColor3f(1.0, 1.0, 1.0);
+	rightFoot();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslated(50, -500, 0);
+	glColor3f(1.0, 1.0, 1.0);
+	leftFoot();
+	glPopMatrix();
+
+	LoadGLTextures();
+	glPushMatrix();
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, texture[0]);
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0, 1.0); glVertex2f(-1.0, 1.0);
+	glTexCoord2f(1.0, 1.0); glVertex2f(1.0, 1.0);
+	glTexCoord2f(1.0, 0.0); glVertex2f(1.0, -1.0);
+	glTexCoord2f(0.0, 0.0); glVertex2f(-1.0, -1.0);
+	glEnd();
+	glDisable(GL_TEXTURE_2D);
+	glPopMatrix();
+	glFlush();
 
 	//glFlush();
 	//glutSwapBuffers(); //마지막에 이걸 해줘야 함
@@ -313,6 +433,7 @@ int main(int argc, char **argv)
 	glutMotionFunc(mouseMove);
 
 	glEnable(GL_DEPTH_TEST);
+
 
 	glutMainLoop();
 
