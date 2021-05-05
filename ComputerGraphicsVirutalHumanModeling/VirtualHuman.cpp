@@ -91,17 +91,18 @@ AUX_RGBImageRec *LoadBMP(char *szFilename) {
 	return NULL;
 }
 
-int LoadGLTextures() {
+int LoadGLTextures(char * szFilePath) {
 	int Status = FALSE;
+	glClearColor(0.0, 0.0, 0.0, 0.5);
 	memset(pTextureImage, 0, sizeof(void *) * 1);
-	if (pTextureImage[0] = LoadBMP("C:/Users/Peter/Pictures/CG/atom.bmp")) {
-		printf("dd");
+
+	if (pTextureImage[0] = LoadBMP(szFilePath)) {
 		Status = TRUE;
 		glGenTextures(1, &MyTextureObject[0]);
 		glBindTexture(GL_TEXTURE_2D, MyTextureObject[0]);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexImage2D(GL_TEXTURE_2D, 0, 3, pTextureImage[0]->sizeX, pTextureImage[0]->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, pTextureImage[0]->data);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glEnable(GL_TEXTURE_2D);
 	}
 	if (pTextureImage[0]) {
@@ -287,8 +288,7 @@ void display(void) //drawSnowman()과 같음
 	leftFoot();
 	glPopMatrix();
 
-	LoadGLTextures();
-	glPushMatrix();
+	/*glPushMatrix();
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, texture[0]);
 	glBegin(GL_QUADS);
@@ -299,7 +299,45 @@ void display(void) //drawSnowman()과 같음
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
 	glPopMatrix();
-	glFlush();
+	glFlush();*/
+
+	glBindTexture(GL_TEXTURE_2D, MyTextureObject[0]); 
+	glBegin(GL_QUADS); 
+	glTexCoord2f(0.0f, 0.0f);
+	glVertex3f(-1.0f, -1.0f, 1.0f); //앞면 
+	glTexCoord2f(1.0f, 0.0f); 
+	glVertex3f( 1.0f, -1.0f, 1.0f); 
+	glTexCoord2f(1.0f, 1.0f); 
+	glVertex3f( 1.0f, 1.0f, 1.0f); 
+	glTexCoord2f(0.0f, 1.0f); 
+	glVertex3f(-1.0f, 1.0f, 1.0f); 
+	glTexCoord2f(1.0f, 0.0f); 
+	glVertex3f(-1.0f, -1.0f, -1.0f); //뒷면 
+	glTexCoord2f(1.0f, 1.0f); 
+	glVertex3f(-1.0f, 1.0f, -1.0f); 
+	glTexCoord2f(0.0f, 1.0f); 
+	glVertex3f( 1.0f, 1.0f, -1.0f); 
+	glTexCoord2f(0.0f, 0.0f); 
+	glVertex3f( 1.0f, -1.0f, -1.0f); 
+	glTexCoord2f(0.0f, 1.0f); 
+	glVertex3f(-1.0f, 1.0f, -1.0f); //윗면 
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, 1.0f, 1.0f); 
+	glTexCoord2f(1.0f, 0.0f); glVertex3f( 1.0f, 1.0f, 1.0f); 
+	glTexCoord2f(1.0f, 1.0f); glVertex3f( 1.0f, 1.0f, -1.0f); 
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f, -1.0f, -1.0f); //아랫면 
+	glTexCoord2f(0.0f, 1.0f); glVertex3f( 1.0f, -1.0f, -1.0f); 
+	glTexCoord2f(0.0f, 0.0f); glVertex3f( 1.0f, -1.0f, 1.0f); 
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f, 1.0f); 
+	glTexCoord2f(1.0f, 0.0f); glVertex3f( 1.0f, -1.0f, -1.0f); //우측면 
+	glTexCoord2f(1.0f, 1.0f); glVertex3f( 1.0f, 1.0f, -1.0f); 
+	glTexCoord2f(0.0f, 1.0f); glVertex3f( 1.0f, 1.0f, 1.0f); 
+	glTexCoord2f(0.0f, 0.0f); glVertex3f( 1.0f, -1.0f, 1.0f); 
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, -1.0f, -1.0f); //좌측면 
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f, 1.0f); 
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f, 1.0f, 1.0f); 
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f, 1.0f, -1.0f); 
+	glEnd(); 
+	glutSwapBuffers();
 
 	//glFlush();
 	//glutSwapBuffers(); //마지막에 이걸 해줘야 함
@@ -415,6 +453,8 @@ void mouseMove(int x, int y) {
 
 int main(int argc, char **argv)
 {
+	string img_Path = "C:/Users/Peter/Pictures/CG/atom.bmp";
+
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowSize(600, 600);
@@ -434,6 +474,7 @@ int main(int argc, char **argv)
 
 	glEnable(GL_DEPTH_TEST);
 
+	LoadGLTextures("C:/Users/Peter/Pictures/CG/sample1.bmp");
 
 	glutMainLoop();
 
