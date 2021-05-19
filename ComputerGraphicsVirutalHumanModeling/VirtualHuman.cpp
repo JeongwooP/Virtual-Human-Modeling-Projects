@@ -48,19 +48,34 @@ using namespace std;
 //GLuint texture0;
 
 
-GLUquadricObj *h, *t;
+GLUquadricObj *h, *t, *earth;
+
+
+static float zoom = 5.0; //줌 변수
+float scale = 1.0;
 
 int cameraLength = 0;
 int viewX = 0, viewY = 0;
 
-float angleX = 0.0f;
-float angleY = 0.0f;
+float angleX = 30.0f;
+float angleY = 30.0f;
+float angleZ = 30.0f;
+
+int mouse_state = 0;
+int mouse_button = 0;
+int mouse_X = 0;
+int mouse_Y = 0;
+
+int projection = 1;
+int size_ = 10;
+int windowWidth;
+int windowHeight;
 
 // actual vector representing the camera's direction
 float lx = 0.0f, ly = 0.0f, lz = 0.0f;
 
 // XZ position of the camera
-float x = 0.0f, y = 0.0f, z = 0.0f;
+static float x = 0.0f, y = 0.0f, z = 0.0f;
 
 float deltaAngleX = 0.0f;
 float deltaAngleY = 0.0f;
@@ -92,6 +107,11 @@ AUX_RGBImageRec *LoadBMP(char *szFilename) {
 }
 
 int LoadGLTextures(char * szFilePath) {
+	earth = gluNewQuadric();
+
+	gluQuadricDrawStyle(earth, GLU_FILL);
+	gluQuadricTexture(earth, GL_TRUE);
+
 	int Status = FALSE;
 	glClearColor(0.0, 0.0, 0.0, 0.5);
 	memset(pTextureImage, 0, sizeof(void *) * 1);
@@ -114,36 +134,53 @@ int LoadGLTextures(char * szFilePath) {
 	return Status;
 }
 
-void changeSize(int w, int h) {
+//void changeSize(int w, int h) {
+//
+//	if (h == 0)
+//		h = 1;
+//
+//	float ratio = w / h;
+//
+//	glMatrixMode(GL_PROJECTION);
+//
+//	glLoadIdentity();
+//
+//	glViewport(0, 0, w, h);
+//
+//	// Set the correct perspective.
+//	//gluPerspective(45.0f, ratio, 0.1f, 100.0f);
+//	glOrtho(-700.0, 700.0, -700.0, 700.0, 0.0, 300.0);
+//
+//	glMatrixMode(GL_MODELVIEW);
+//}
 
-	if (h == 0)
-		h = 1;
-
-	float ratio = w / h;
+void resize(int width, int height) {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glViewport(0, 0, width, height);
 
 	glMatrixMode(GL_PROJECTION);
-
 	glLoadIdentity();
 
-	glViewport(0, 0, w, h);
+	if (projection)
+		glOrtho(-size_, size_, -size_, size_, -size_, size_);
+	else
+		gluPerspective(60.0, (float)width / height, 0.1, 100.);
 
-	// Set the correct perspective.
-	//gluPerspective(45.0f, ratio, 0.1f, 100.0f);
-	glOrtho(-700.0, 700.0, -700.0, 700.0, 0.0, 1300.0);
-
-	glMatrixMode(GL_MODELVIEW);
+	glEnable(GL_DEPTH_TEST);
+	windowWidth = width;
+	windowHeight = height;
 }
 
 void head()
 {
-	glutSolidSphere(75, 1000, 1000);
+	glutSolidSphere(5, 1000, 1000);
 }
 
 void torso()
 {
 	h = gluNewQuadric();
 	gluQuadricDrawStyle(h, GLU_LINE);
-	gluCylinder(h, 100, 70, 250, 20, 20);
+	gluCylinder(h, 0.55, 0.4, 0.85, 12, 10);
 	/*glPushMatrix();
 	glColor3f(1.0, 0.0, 5.0);
 	glRotatef(-90.0, 1.0, 0.0, 0.0);
@@ -215,9 +252,19 @@ void setCamera()
 void display(void) //drawSnowman()과 같음
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	gluLookAt(0.0, 0.0, -5.0, 0.0, 0.0, 0.0, 0, 1, 0);
+
+	
+	glRotatef(angleX, 1.0f, 0.0f, 0.0f);
+	glRotatef(angleY, 0.0f, 1.0f, 0.0f);
+	glRotatef(angleZ, 0.0f, 0.0f, 1.0f);
+	glScalef(scale, scale, scale);
 
 	glPushMatrix();
-	glTranslated(0, 70, 0);	//x축,y축,z축 위치 지정
+	glTranslated(0, 10, 0);	//x축,y축,z축 위치 지정
 	glColor3f(1.0, 0.0, 1.0);
 	head();
 	glPopMatrix();
@@ -301,42 +348,43 @@ void display(void) //drawSnowman()과 같음
 	glPopMatrix();
 	glFlush();*/
 
-	glBindTexture(GL_TEXTURE_2D, MyTextureObject[0]); 
-	glBegin(GL_QUADS); 
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(-1.0f, -1.0f, 1.0f); //앞면 
-	glTexCoord2f(1.0f, 0.0f); 
-	glVertex3f( 1.0f, -1.0f, 1.0f); 
-	glTexCoord2f(1.0f, 1.0f); 
-	glVertex3f( 1.0f, 1.0f, 1.0f); 
-	glTexCoord2f(0.0f, 1.0f); 
-	glVertex3f(-1.0f, 1.0f, 1.0f); 
-	glTexCoord2f(1.0f, 0.0f); 
-	glVertex3f(-1.0f, -1.0f, -1.0f); //뒷면 
-	glTexCoord2f(1.0f, 1.0f); 
-	glVertex3f(-1.0f, 1.0f, -1.0f); 
-	glTexCoord2f(0.0f, 1.0f); 
-	glVertex3f( 1.0f, 1.0f, -1.0f); 
-	glTexCoord2f(0.0f, 0.0f); 
-	glVertex3f( 1.0f, -1.0f, -1.0f); 
-	glTexCoord2f(0.0f, 1.0f); 
-	glVertex3f(-1.0f, 1.0f, -1.0f); //윗면 
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, 1.0f, 1.0f); 
-	glTexCoord2f(1.0f, 0.0f); glVertex3f( 1.0f, 1.0f, 1.0f); 
-	glTexCoord2f(1.0f, 1.0f); glVertex3f( 1.0f, 1.0f, -1.0f); 
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f, -1.0f, -1.0f); //아랫면 
-	glTexCoord2f(0.0f, 1.0f); glVertex3f( 1.0f, -1.0f, -1.0f); 
-	glTexCoord2f(0.0f, 0.0f); glVertex3f( 1.0f, -1.0f, 1.0f); 
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f, 1.0f); 
-	glTexCoord2f(1.0f, 0.0f); glVertex3f( 1.0f, -1.0f, -1.0f); //우측면 
-	glTexCoord2f(1.0f, 1.0f); glVertex3f( 1.0f, 1.0f, -1.0f); 
-	glTexCoord2f(0.0f, 1.0f); glVertex3f( 1.0f, 1.0f, 1.0f); 
-	glTexCoord2f(0.0f, 0.0f); glVertex3f( 1.0f, -1.0f, 1.0f); 
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, -1.0f, -1.0f); //좌측면 
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f, 1.0f); 
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f, 1.0f, 1.0f); 
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f, 1.0f, -1.0f); 
-	glEnd(); 
+
+	//glBindTexture(GL_TEXTURE_2D, MyTextureObject[0]); 
+	//glBegin(GL_QUADS); 
+	//glTexCoord2f(0.0f, 0.0f);
+	//glVertex3f(-1.0f, -1.0f, 1.0f); //앞면 
+	//glTexCoord2f(1.0f, 0.0f); 
+	//glVertex3f( 1.0f, -1.0f, 1.0f); 
+	//glTexCoord2f(1.0f, 1.0f); 
+	//glVertex3f( 1.0f, 1.0f, 1.0f); 
+	//glTexCoord2f(0.0f, 1.0f); 
+	//glVertex3f(-1.0f, 1.0f, 1.0f); 
+	//glTexCoord2f(1.0f, 0.0f); 
+	//glVertex3f(-1.0f, -1.0f, -1.0f); //뒷면 
+	//glTexCoord2f(1.0f, 1.0f); 
+	//glVertex3f(-1.0f, 1.0f, -1.0f); 
+	//glTexCoord2f(0.0f, 1.0f); 
+	//glVertex3f( 1.0f, 1.0f, -1.0f); 
+	//glTexCoord2f(0.0f, 0.0f); 
+	//glVertex3f( 1.0f, -1.0f, -1.0f); 
+	//glTexCoord2f(0.0f, 1.0f); 
+	//glVertex3f(-1.0f, 1.0f, -1.0f); //윗면 
+	//glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, 1.0f, 1.0f); 
+	//glTexCoord2f(1.0f, 0.0f); glVertex3f( 1.0f, 1.0f, 1.0f); 
+	//glTexCoord2f(1.0f, 1.0f); glVertex3f( 1.0f, 1.0f, -1.0f); 
+	//glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f, -1.0f, -1.0f); //아랫면 
+	//glTexCoord2f(0.0f, 1.0f); glVertex3f( 1.0f, -1.0f, -1.0f); 
+	//glTexCoord2f(0.0f, 0.0f); glVertex3f( 1.0f, -1.0f, 1.0f); 
+	//glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f, 1.0f); 
+	//glTexCoord2f(1.0f, 0.0f); glVertex3f( 1.0f, -1.0f, -1.0f); //우측면 
+	//glTexCoord2f(1.0f, 1.0f); glVertex3f( 1.0f, 1.0f, -1.0f); 
+	//glTexCoord2f(0.0f, 1.0f); glVertex3f( 1.0f, 1.0f, 1.0f); 
+	//glTexCoord2f(0.0f, 0.0f); glVertex3f( 1.0f, -1.0f, 1.0f); 
+	//glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, -1.0f, -1.0f); //좌측면 
+	//glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f, 1.0f); 
+	//glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f, 1.0f, 1.0f); 
+	//glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f, 1.0f, -1.0f); 
+	//glEnd(); 
 	glutSwapBuffers();
 
 	//glFlush();
@@ -357,29 +405,29 @@ void computePos(float deltaMove) {
 	z += deltaMove * lz * 0.1f;
 }
 
-void renderScene(void) {
-
-	if (deltaMove)
-		computePos(deltaMove);
-
-	// Clear Color and Depth Buffers
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	// Reset transformations
-	glLoadIdentity();
-	// Set the camera
-	gluLookAt(x + lx, y + ly, z + lz,
-		0, 0, 0,
-		0.0f, 1.0f, 0.0f);
-	
-	glPushMatrix();
-	glTranslatef(0, 0, 0);
-	display();
-	glPopMatrix();
-
-
-	glutSwapBuffers();
-}
+//void renderScene(void) {
+//
+//	if (deltaMove)
+//		computePos(deltaMove);
+//
+//	// Clear Color and Depth Buffers
+//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//
+//	// Reset transformations
+//	glLoadIdentity();
+//	// Set the camera
+//	gluLookAt(x + lx, y + ly, z + lz,
+//		0, 0, 0,
+//		0.0f, 1.0f, 0.0f);
+//	
+//	glPushMatrix();
+//	glTranslatef(0, 0, 0);
+//	display();
+//	glPopMatrix();
+//
+//
+//	glutSwapBuffers();
+//}
 
 
 //void look(int camera)
@@ -389,51 +437,66 @@ void renderScene(void) {
 //		0, 1, 0);
 //}
 
-void onKeyPress(unsigned char key, int x, int y)
-{
-	if (key == 'z' || key == 'Z')
-		deltaMove = -0.5f;
-	else if (key == 'a' || key == 'A')
-		deltaMove = 0.5f;
-	else
-		deltaMove = 0;
+//void onKeyPress(unsigned char key, int x, int y)
+//{
+//	if (key == 'z' || key == 'Z') 
+//		deltaMove = -0.5f;
+//	
+//	else if (key == 'a' || key == 'A')
+//		deltaMove = 0.5f;
+//	else
+//		deltaMove = 0;
+//
+//	//glutPostRedisplay();
+//}
 
-	//glutPostRedisplay();
-}
+//void keyboard(int Key, int x, int y) {
+//	switch (Key) {
+//
+//	case GLUT_KEY_PAGE_DOWN: //줌 축소
+//		y = y + 1;
+//		break;
+//
+//	case GLUT_KEY_PAGE_UP: //줌 확대
+//		y = y - 1;
+//		break;
+//	}
+//	glutPostRedisplay();
+//}
 
-void mouseButton(int button, int state, int x, int y) {
+//void mouseButton(int button, int state, int x, int y) {
+//
+//	// only start motion if the left button is pressed
+//	if (button == GLUT_LEFT_BUTTON) {
+//
+//		// when the button is released
+//		if (state == GLUT_UP) {
+//			angleX += deltaAngleX;
+//			angleY += deltaAngleY;
+//			xOrigin = -1;
+//		}
+//		else {// state = GLUT_DOWN
+//			xOrigin = x;
+//			yOrigin = y;
+//		}
+//	}
+//}
 
-	// only start motion if the left button is pressed
-	if (button == GLUT_LEFT_BUTTON) {
-
-		// when the button is released
-		if (state == GLUT_UP) {
-			angleX += deltaAngleX;
-			angleY += deltaAngleY;
-			xOrigin = -1;
-		}
-		else {// state = GLUT_DOWN
-			xOrigin = x;
-			yOrigin = y;
-		}
-	}
-}
-
-void mouseMove(int x, int y) {
-
-	// this will only be true when the left button is down
-	if (xOrigin >= 0) {
-
-		// update deltaAngle
-		deltaAngleX = (x - xOrigin) * 0.01f;
-		deltaAngleY = (y - yOrigin) * 0.01f;
-
-		// update camera's direction
-		lx = sin(angleX + deltaAngleX);
-		ly = tan(angleY + deltaAngleY);
-		lz = -cos(angleX + deltaAngleX);
-	}
-}
+//void mouseMove(int x, int y) {
+//
+//	// this will only be true when the left button is down
+//	if (xOrigin >= 0) {
+//
+//		// update deltaAngle
+//		deltaAngleX = (x - xOrigin) * 0.01f;
+//		deltaAngleY = (y - yOrigin) * 0.01f;
+//
+//		// update camera's direction
+//		lx = sin(angleX + deltaAngleX);
+//		ly = tan(angleY + deltaAngleY);
+//		lz = -cos(angleX + deltaAngleX);
+//	}
+//}
 
 //void init(void)
 //{
@@ -449,11 +512,54 @@ void mouseMove(int x, int y) {
 //		0, 1, 0);
 //}
 
+//마우스 클릭 판단
+void myMouse(int button, int state, int x, int y) {
+	if (button == GLUT_LEFT_BUTTON) {
+		if (state == GLUT_DOWN) {
+			mouse_state = state;
+			mouse_button = button;
+			mouse_X = x;
+			mouse_Y = y;
+		}
+		else if (state == GLUT_UP) {
+			mouse_state = -1;
+		}
+		else return;
+	}
+	else return;
+	glutPostRedisplay();
+}
 
+//키보드 눌렸을 때 zoom 처리
+void myKeyboard(unsigned char key, int x, int y) {
+	switch (key) {
+	case 'a':
+	case 'A':
+		scale *= zoom;
+		break;
+
+	case 'z':
+	case 'Z':
+		scale /= zoom;
+		break;
+	}
+
+	glutPostRedisplay();
+}
+
+//드래그 판단 됐을 떄 처리
+void myMotion(int x, int y) {
+	if (mouse_button == GLUT_LEFT_BUTTON && mouse_state == GLUT_DOWN) {
+		angleY -= (mouse_X - x) / 5.0;
+		angleX -= (mouse_Y - y) / 5.0;
+		glutPostRedisplay();
+		mouse_X = x;
+		mouse_Y = y;
+	}
+}
 
 int main(int argc, char **argv)
 {
-	string img_Path = "C:/Users/Peter/Pictures/CG/atom.bmp";
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
@@ -462,19 +568,25 @@ int main(int argc, char **argv)
 	glutCreateWindow("Human");
 
 	//init();
-	glutDisplayFunc(renderScene);
-	glutReshapeFunc(changeSize);
-	glutIdleFunc(renderScene);
+	//glutDisplayFunc(renderScene);
+	//glutReshapeFunc(changeSize);
+	//glutIdleFunc(renderScene);
 	//glutIdleFunc(rotate);
 
-	glutKeyboardFunc(onKeyPress);
+	//glutKeyboardFunc(onKeyPress);
 
-	glutMouseFunc(mouseButton);
-	glutMotionFunc(mouseMove);
+	glutReshapeFunc(resize);
+
+	glutDisplayFunc(display);
+
+	glutMouseFunc(myMouse);
+	glutMotionFunc(myMotion);
 
 	glEnable(GL_DEPTH_TEST);
 
-	LoadGLTextures("C:/Users/Peter/Pictures/CG/sample1.bmp");
+	LoadGLTextures("C:/Users/Peter/Pictures/CG/marbles.BMP");
+
+	glutKeyboardFunc(myKeyboard);
 
 	glutMainLoop();
 
