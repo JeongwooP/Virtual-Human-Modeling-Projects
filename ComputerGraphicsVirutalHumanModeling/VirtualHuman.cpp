@@ -173,14 +173,14 @@ void resize(int width, int height) {
 
 void head()
 {
-	glutSolidSphere(5, 1000, 1000);
+	glutSolidSphere(2, 1000, 1000);
 }
 
 void torso()
 {
 	h = gluNewQuadric();
-	gluQuadricDrawStyle(h, GLU_LINE);
-	gluCylinder(h, 0.55, 0.4, 0.85, 12, 10);
+	gluQuadricDrawStyle(h, GLU_FILL);
+	gluCylinder(h, 1, 2, 4, 120, 100);
 	/*glPushMatrix();
 	glColor3f(1.0, 0.0, 5.0);
 	glRotatef(-90.0, 1.0, 0.0, 0.0);
@@ -194,7 +194,7 @@ void rightArm()
 {
 	h = gluNewQuadric();
 	gluQuadricDrawStyle(h, GLU_LINE);
-	gluCylinder(h, 20, 20, 330, 20, 20);
+	gluCylinder(h, 0.7, 0.7, 4.5, 20, 20);
 }
 
 void leftArm()
@@ -252,6 +252,7 @@ void setCamera()
 void display(void) //drawSnowman()과 같음
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClearColor(0.5, 0.5, 0.5, 1);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
@@ -264,20 +265,20 @@ void display(void) //drawSnowman()과 같음
 	glScalef(scale, scale, scale);
 
 	glPushMatrix();
-	glTranslated(0, 10, 0);	//x축,y축,z축 위치 지정
-	glColor3f(1.0, 0.0, 1.0);
+	glTranslated(0, 2, 0);	//x축,y축,z축 위치 지정
+	glColor3f(1.0, 0.0, 0.0);
 	head();
 	glPopMatrix();
 
 	glPushMatrix();
 	glRotatef(90, 0.0, 1.0, 0.0); //y축 중심으로 90도 회전
-	glColor3f(1.0, 0.0, 1.0);
+	glColor3f(0.0, 1.0, 0.0);
 	glRotatef(90, 1.0, 0.0, 0.0);
 	torso();
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslated(0, -50, 0);
+	glTranslated(0, -0.8, 0);
 	glRotatef(90, 0.0, 1.0, 0.0); //y축 중심으로 90도 회전
 	glColor3f(1.0, 0.0, 1.0);
 	glRotatef(180, 1.0, 0.0, 0.0);
@@ -567,6 +568,7 @@ int main(int argc, char **argv)
 	glutInitWindowPosition(100, 100);
 	glutCreateWindow("Human");
 
+
 	//init();
 	//glutDisplayFunc(renderScene);
 	//glutReshapeFunc(changeSize);
@@ -578,6 +580,7 @@ int main(int argc, char **argv)
 	glutReshapeFunc(resize);
 
 	glutDisplayFunc(display);
+
 
 	glutMouseFunc(myMouse);
 	glutMotionFunc(myMotion);
