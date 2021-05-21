@@ -193,55 +193,59 @@ void torso()
 void rightArm()
 {
 	h = gluNewQuadric();
-	gluQuadricDrawStyle(h, GLU_LINE);
+	gluQuadricDrawStyle(h, GLU_FILL);
 	gluCylinder(h, 0.7, 0.7, 4.5, 20, 20);
 }
 
 void leftArm()
 {
 	h = gluNewQuadric();
-	gluQuadricDrawStyle(h, GLU_LINE);
-	gluCylinder(h, 20, 20, 330, 20, 20);
+	gluQuadricDrawStyle(h, GLU_FILL);
+	gluCylinder(h, 0.7, 0.7, 4.5, 20, 20);
 }
 
 void rightLeg()
 {
 	h = gluNewQuadric();
-	gluQuadricDrawStyle(h, GLU_LINE);
-	gluCylinder(h, 20, 20, 330, 20, 20);
+	gluQuadricDrawStyle(h, GLU_FILL);
+	gluCylinder(h, 0.7, 0.7, 4.5, 20, 20);
 }
 
 void leftLeg()
 {
 	h = gluNewQuadric();
-	gluQuadricDrawStyle(h, GLU_LINE);
-	gluCylinder(h, 20, 20, 330, 20, 20);
-}
-
-void leftHand()
-{
-	glutSolidSphere(30, 1000, 1000);
+	gluQuadricDrawStyle(h, GLU_FILL);
+	gluCylinder(h, 0.7, 0.7, 4.5, 20, 20);
 }
 
 void rightHand()
 {
-	glutSolidSphere(30, 1000, 1000);
+	glutSolidSphere(0.8, 1000, 1000);
 }
 
-void leftFoot()
+void leftHand()
 {
-	glutSolidSphere(30, 1000, 1000);
+	glutSolidSphere(0.8, 1000, 1000);
 }
 
 void rightFoot()
 {
-	glutSolidSphere(30, 1000, 1000);
+	glutSolidSphere(0.8, 1000, 1000);
 }
 
-void setCamera()
+void leftFoot()
 {
-
+	glutSolidSphere(0.8, 1000, 1000);
 }
+
+void closeTop() {
+	glutSolidSphere(1.0, 1000, 1000);
+}
+
+void closeBottom() {
+	glutSolidSphere(1.6, 1000, 1000);
+}
+
 
 //void reshape(int w, int h)
 //{
@@ -271,6 +275,12 @@ void display(void) //drawSnowman()과 같음
 	glPopMatrix();
 
 	glPushMatrix();
+	glTranslated(0, 0.2, 0);	//x축,y축,z축 위치 지정
+	glColor3f(1.0, 1.0, 0.0);
+	closeTop();
+	glPopMatrix();
+
+	glPushMatrix();
 	glRotatef(90, 0.0, 1.0, 0.0); //y축 중심으로 90도 회전
 	glColor3f(0.0, 1.0, 0.0);
 	glRotatef(90, 1.0, 0.0, 0.0);
@@ -278,61 +288,67 @@ void display(void) //drawSnowman()과 같음
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslated(0, -0.8, 0);
+	glTranslated(0, -2.7, 0);	//x축,y축,z축 위치 지정
+	glColor3f(0.0, 1.0, 0.0);
+	closeBottom();
+	glPopMatrix();
+
+	glPushMatrix();
+	glTranslated(0, -1, 0);
 	glRotatef(90, 0.0, 1.0, 0.0); //y축 중심으로 90도 회전
-	glColor3f(1.0, 0.0, 1.0);
+	glColor3f(1.0, 1.0, 0.0);
 	glRotatef(180, 1.0, 0.0, 0.0);
 	rightArm();
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslated(0, -50, 0);
+	glTranslated(0, -1, 0);
 	glRotatef(90, 0.0, 1.0, 0.0); 
-	glColor3f(1.0, 0.0, 1.0);
+	glColor3f(1.0, 1.0, 0.0);
 	glRotatef(360, 1.0, 0.0, 0.0);
 	leftArm();
 	glPopMatrix();
 
 
 	glPushMatrix();
-	glTranslated(-50, -150, 0);
+	glTranslated(-0.8, -3, 0);
 	glRotatef(90, 0.0, 1.0, 0.0);
-	glColor3f(1.0, 1.0, 1.0);
+	glColor3f(0.0, 1.0, 1.0);
 	glRotatef(90, 1.0, 0.0, 0.0);
 	glRotatef(90, 0.0, 0.0, 1.0);
 	rightLeg();
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslated(50, -150, 0);
+	glTranslated(0.8, -3, 0);
 	glRotatef(90, 0.0, 1.0, 0.0);
-	glColor3f(1.0, 1.0, 1.0);
+	glColor3f(0.0, 1.0, 1.0);
 	glRotatef(90, 1.0, 0.0, 0.0);
 	glRotatef(90, 0.0, 0.0, 1.0);
 	leftLeg();
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslated(-350, -50, 0);
-	glColor3f(1.0, 1.0, 1.0);
+	glTranslated(-5, -1, 0);
+	glColor3f(1.0, 0.5, 0.0);
 	rightHand();
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslated(350, -50, 0);
-	glColor3f(1.0, 1.0, 1.0);
+	glTranslated(5, -1, 0);
+	glColor3f(1.0, 0.5, 0.0);
 	leftHand();
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslated(-50, -500, 0);
-	glColor3f(1.0, 1.0, 1.0);
+	glTranslated(-0.8, -7.3, 0);
+	glColor3f(0.5, 0.0, 1.0);
 	rightFoot();
 	glPopMatrix();
 
 	glPushMatrix();
-	glTranslated(50, -500, 0);
-	glColor3f(1.0, 1.0, 1.0);
+	glTranslated(0.8, -7.3, 0);
+	glColor3f(0.5, 0.0, 1.0);
 	leftFoot();
 	glPopMatrix();
 
