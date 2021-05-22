@@ -17,29 +17,6 @@ using namespace std;
 
 #define GL_SILENCE_DEPRECATION
 
-#define WIN_WIDTH 800
-#define WIN_HEIGHT 800
-#define TORSO_HEIGHT 5.0
-#define TORSO_RADIUS 1.3
-#define UPPER_ARM_HEIGHT 2.5
-#define LOWER_ARM_HEIGHT 2.3
-#define UPPER_ARM_RADIUS  0.5
-#define LOWER_ARM_RADIUS  0.5
-#define UPPER_LEG_RADIUS  0.5
-#define LOWER_LEG_RADIUS  0.5
-#define LOWER_LEG_HEIGHT 3.1
-#define UPPER_LEG_HEIGHT 3.3
-#define HEAD_HEIGHT 1.2
-#define HEAD_RADIUS 1.4
-#define HAND_RADIUS 0.6
-#define HAND_HEIGHT 0.9
-#define FOOT_RADIUS 0.7
-#define FOOT_HEIGHT 1.1
-#define NECK_RADIUS 0.5
-#define NECK_HEIGHT 1.0
-#define JOINT_POINT_RADIUS 0.5
-#define JOINT_POINT_HEIGHT 0.5
-
 
 //int image_width = 0;
 //int image_height = 0;
@@ -71,18 +48,6 @@ int size_ = 10;
 int windowWidth;
 int windowHeight;
 
-// actual vector representing the camera's direction
-float lx = 0.0f, ly = 0.0f, lz = 0.0f;
-
-// XZ position of the camera
-static float x = 0.0f, y = 0.0f, z = 0.0f;
-
-float deltaAngleX = 0.0f;
-float deltaAngleY = 0.0f;
-
-float deltaMove = 0.0f;
-int xOrigin = -1;
-int yOrigin = -1;
 
 unsigned int MyTextureObject[1];
 AUX_RGBImageRec *pTextureImage[1];
@@ -134,25 +99,6 @@ int LoadGLTextures(char * szFilePath) {
 	return Status;
 }
 
-//void changeSize(int w, int h) {
-//
-//	if (h == 0)
-//		h = 1;
-//
-//	float ratio = w / h;
-//
-//	glMatrixMode(GL_PROJECTION);
-//
-//	glLoadIdentity();
-//
-//	glViewport(0, 0, w, h);
-//
-//	// Set the correct perspective.
-//	//gluPerspective(45.0f, ratio, 0.1f, 100.0f);
-//	glOrtho(-700.0, 700.0, -700.0, 700.0, 0.0, 300.0);
-//
-//	glMatrixMode(GL_MODELVIEW);
-//}
 
 void resize(int width, int height) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -408,126 +354,6 @@ void display(void) //drawSnowman()과 같음
 	//glutSwapBuffers(); //마지막에 이걸 해줘야 함
 }
 
-//void mouseMove(GLint X, GLint Y)
-//{
-//	viewX = X;
-//	viewY = Y;
-//	glutPostRedisplay();
-//}
-
-void computePos(float deltaMove) {
-
-	x += deltaMove * lx * 0.1f;
-	y += deltaMove * ly * 0.1f;
-	z += deltaMove * lz * 0.1f;
-}
-
-//void renderScene(void) {
-//
-//	if (deltaMove)
-//		computePos(deltaMove);
-//
-//	// Clear Color and Depth Buffers
-//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//
-//	// Reset transformations
-//	glLoadIdentity();
-//	// Set the camera
-//	gluLookAt(x + lx, y + ly, z + lz,
-//		0, 0, 0,
-//		0.0f, 1.0f, 0.0f);
-//	
-//	glPushMatrix();
-//	glTranslatef(0, 0, 0);
-//	display();
-//	glPopMatrix();
-//
-//
-//	glutSwapBuffers();
-//}
-
-
-//void look(int camera)
-//{
-//	gluLookAt(200 + 1 * camera, 200 + 1 * camera, 200 + 1 * camera,
-//		0, 0, 0,
-//		0, 1, 0);
-//}
-
-//void onKeyPress(unsigned char key, int x, int y)
-//{
-//	if (key == 'z' || key == 'Z') 
-//		deltaMove = -0.5f;
-//	
-//	else if (key == 'a' || key == 'A')
-//		deltaMove = 0.5f;
-//	else
-//		deltaMove = 0;
-//
-//	//glutPostRedisplay();
-//}
-
-//void keyboard(int Key, int x, int y) {
-//	switch (Key) {
-//
-//	case GLUT_KEY_PAGE_DOWN: //줌 축소
-//		y = y + 1;
-//		break;
-//
-//	case GLUT_KEY_PAGE_UP: //줌 확대
-//		y = y - 1;
-//		break;
-//	}
-//	glutPostRedisplay();
-//}
-
-//void mouseButton(int button, int state, int x, int y) {
-//
-//	// only start motion if the left button is pressed
-//	if (button == GLUT_LEFT_BUTTON) {
-//
-//		// when the button is released
-//		if (state == GLUT_UP) {
-//			angleX += deltaAngleX;
-//			angleY += deltaAngleY;
-//			xOrigin = -1;
-//		}
-//		else {// state = GLUT_DOWN
-//			xOrigin = x;
-//			yOrigin = y;
-//		}
-//	}
-//}
-
-//void mouseMove(int x, int y) {
-//
-//	// this will only be true when the left button is down
-//	if (xOrigin >= 0) {
-//
-//		// update deltaAngle
-//		deltaAngleX = (x - xOrigin) * 0.01f;
-//		deltaAngleY = (y - yOrigin) * 0.01f;
-//
-//		// update camera's direction
-//		lx = sin(angleX + deltaAngleX);
-//		ly = tan(angleY + deltaAngleY);
-//		lz = -cos(angleX + deltaAngleX);
-//	}
-//}
-
-//void init(void)
-//{
-//	glEnable(GL_DEPTH_TEST);
-//
-//	glClearColor(0.0, 0.8, 1.0, 0.0);
-//	glMatrixMode(GL_PROJECTION);
-//	glLoadIdentity();
-//	glOrtho(-500.0, 700.0, -500.0, 700.0, 0.0, 1000.0);
-//
-//	gluLookAt(200, 200, 200,
-//		0, 0, 0,
-//		0, 1, 0);
-//}
 
 //마우스 클릭 판단
 void myMouse(int button, int state, int x, int y) {
