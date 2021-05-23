@@ -31,9 +31,6 @@ GLUquadricObj *h, *t, *earth;
 static float zoom = 5.0; //줌 변수
 float scale = 1.0;
 
-int cameraLength = 0;
-int viewX = 0, viewY = 0;
-
 float angleX = 30.0f;
 float angleY = 30.0f;
 float angleZ = 30.0f;
@@ -127,13 +124,7 @@ void torso()
 	h = gluNewQuadric();
 	gluQuadricDrawStyle(h, GLU_FILL);
 	gluCylinder(h, 1, 2, 4, 120, 100);
-	/*glPushMatrix();
-	glColor3f(1.0, 0.0, 5.0);
-	glRotatef(-90.0, 1.0, 0.0, 0.0);
-	glRotatef(15.0, 0.0, 0.0, 1.0);
-	glScalef(HEAD_HEIGHT, HEAD_HEIGHT, HEAD_RADIUS);
-	gluSphere(h, 1.0, 10, 10);
-	glPopMatrix();*/
+	
 }
 
 void rightArm()
@@ -193,13 +184,7 @@ void closeBottom() {
 }
 
 
-//void reshape(int w, int h)
-//{
-//	glLoadIdentity();
-//	glViewport(0, 0, w, h);
-//}
-
-void display(void) //drawSnowman()과 같음
+void display(void) //draw
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.5, 0.5, 0.5, 1);
@@ -355,7 +340,7 @@ void display(void) //drawSnowman()과 같음
 }
 
 
-//마우스 클릭 판단
+//마우스 클릭했는지 판단함
 void myMouse(int button, int state, int x, int y) {
 	if (button == GLUT_LEFT_BUTTON) {
 		if (state == GLUT_DOWN) {
@@ -373,7 +358,7 @@ void myMouse(int button, int state, int x, int y) {
 	glutPostRedisplay();
 }
 
-//키보드 눌렸을 때 zoom 처리
+//키보드를 눌렀을 때 확대 축소 처리함
 void myKeyboard(unsigned char key, int x, int y) {
 	switch (key) {
 	case 'a':
@@ -390,7 +375,7 @@ void myKeyboard(unsigned char key, int x, int y) {
 	glutPostRedisplay();
 }
 
-//드래그 판단 됐을 떄 처리
+//드래그 판단 처리
 void myMotion(int x, int y) {
 	if (mouse_button == GLUT_LEFT_BUTTON && mouse_state == GLUT_DOWN) {
 		angleY -= (mouse_X - x) / 5.0;
@@ -409,15 +394,6 @@ int main(int argc, char **argv)
 	glutInitWindowSize(600, 600);
 	glutInitWindowPosition(100, 100);
 	glutCreateWindow("Human");
-
-
-	//init();
-	//glutDisplayFunc(renderScene);
-	//glutReshapeFunc(changeSize);
-	//glutIdleFunc(renderScene);
-	//glutIdleFunc(rotate);
-
-	//glutKeyboardFunc(onKeyPress);
 
 	glutReshapeFunc(resize);
 
