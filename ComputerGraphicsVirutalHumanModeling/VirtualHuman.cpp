@@ -9,11 +9,9 @@
 #include <GL.h>
 #include <glaux.h>
 
+//제출본
 
 using namespace std;
-
-//20102424, 20112478 .pptx 도라에몽 참고하기
-//이걸로 제출하기
 
 #define GL_SILENCE_DEPRECATION
 
@@ -28,7 +26,7 @@ using namespace std;
 GLUquadricObj *h, *t, *earth;
 
 
-static float zoom = 5.0; //줌 변수
+static float zoom = 2.0; //줌 변수
 float scale = 1.0;
 
 float angleX = 30.0f;
@@ -53,7 +51,6 @@ GLuint  texture[1];
 
 //ctrl + k + c 주석
 //ctrl + k + u 주석해제
-
 
 AUX_RGBImageRec *LoadBMP(char *szFilename) {
 	FILE * pFile = NULL;
@@ -398,7 +395,6 @@ int main(int argc, char **argv)
 	glutReshapeFunc(resize);
 
 	glutDisplayFunc(display);
-
 
 	glutMouseFunc(myMouse);
 	glutMotionFunc(myMotion);
