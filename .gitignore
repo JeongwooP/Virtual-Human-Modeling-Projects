@@ -276,3 +276,9 @@ ModelManifest.xml
 *.exe
 *.out
 *.app
+
+# Make only .cpps available
+*.sln
+*.vcxproj
+*.filters
+*.user

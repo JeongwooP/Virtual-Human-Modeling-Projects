@@ -83,7 +83,7 @@ void rightFoot()
 }
 void setCamera()
 {
-	gluLookAt(0, 0, 1 * cameraLength, 0, 0, 0, 0, 1, 0);
+	gluLookAt(200, 200, 1 * cameraLength, 0, 0, 0, 0, 1, 0);
 
 	glRotated(verticalAngle, 0, 1, 0);
 	glRotated(horizonalAngle, 1, 0, 0);
@@ -110,7 +110,7 @@ void display(void)
 	glRotatef(90, 1.0, 0.0, 0.0);
 	torso();
 	glPopMatrix();
-	
+
 	setCamera();
 
 	glFlush();
@@ -123,6 +123,10 @@ void mouseMove(GLint x, GLint y)
 
 	verticalAngle += (double)(x - oldX) / width * 90 * 2;
 	horizonalAngle += (double)(oldY - y) / height * 90 * 2;
+
+	oldX = x;
+	oldY = y;
+
 	glutPostRedisplay();
 }
 
